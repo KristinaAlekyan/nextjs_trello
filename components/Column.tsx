@@ -4,6 +4,7 @@ import { Draggable, Droppable } from 'react-beautiful-dnd'
 import TodoCard from './TodoCard'
 import { PlusCircleIcon } from '@heroicons/react/24/solid'
 import { useBoardStore } from '@/store/BoardStore'
+import { useModalStore } from '@/store/ModalStore'
 
 type Props = {
     id: TypedColumn,
@@ -12,8 +13,13 @@ type Props = {
 }
 
 function Column({ id, todos, index }: Props) {
-    const [searchString, setSearchString] = useBoardStore((state) => [state.searchString, state.setSearchString])
+    const [searchString, setSearchString, setNewTaskType] = useBoardStore((state) => [state.searchString, state.setSearchString, state.setNewTaskType])
+    const openModal = useModalStore((state) => state.openModal)
 
+    const handleAddTodo = () => {
+        setNewTaskType(id);
+        openModal();
+    }
     return (
         <Draggable draggableId={id} index={index} >
             {(provided) => (
@@ -33,8 +39,8 @@ function Column({ id, todos, index }: Props) {
                                     {id}
                                     <span className='text-gray-500'>
                                         {!searchString
-                                            ? todos.length 
-                                            : todos.filter(todo=> 
+                                            ? todos.length
+                                            : todos.filter(todo =>
                                                 todo.title
                                                     .toLowerCase()
                                                     .includes(searchString.toLowerCase())).length
@@ -44,34 +50,34 @@ function Column({ id, todos, index }: Props) {
                                     {
                                         todos.map((todo, index) => {
                                             if (
-                                                searchString && 
+                                                searchString &&
                                                 !todo.title
-                                                .toLowerCase()
-                                                .includes(searchString.toLowerCase()))
-                                                    return null;
-                                                return (
-                                                    <Draggable
-                                                        key={todo.$id}
-                                                        draggableId={todo.$id}
-                                                        index={index}
-                                                    >
-                                                        {(provided) => (
-                                                            <TodoCard
-                                                                todo={todo}
-                                                                index={index}
-                                                                id={id}
-                                                                innerRef={provided.innerRef}
-                                                                draggableProps={provided.draggableProps}
-                                                                dragHandleProps={provided.dragHandleProps}
-                                                            />
-                                                        )}
-                                                    </Draggable>
-                                                )
+                                                    .toLowerCase()
+                                                    .includes(searchString.toLowerCase()))
+                                                return null;
+                                            return (
+                                                <Draggable
+                                                    key={todo.$id}
+                                                    draggableId={todo.$id}
+                                                    index={index}
+                                                >
+                                                    {(provided) => (
+                                                        <TodoCard
+                                                            todo={todo}
+                                                            index={index}
+                                                            id={id}
+                                                            innerRef={provided.innerRef}
+                                                            draggableProps={provided.draggableProps}
+                                                            dragHandleProps={provided.dragHandleProps}
+                                                        />
+                                                    )}
+                                                </Draggable>
+                                            )
                                         })
                                     }
                                     {provided.placeholder}
                                     <div className='flex items-end'>
-                                        <button className='text-green-500 hover:text-green-600'>
+                                        <button onClick={handleAddTodo} className='text-green-500 hover:text-green-600'>
                                             <PlusCircleIcon className='h-10 w-10' />
                                         </button>
                                     </div>

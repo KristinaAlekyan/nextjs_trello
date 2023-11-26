@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Header from '@/components/Header'
+import Modal from '@/components/Modal'
 
 
 export const metadata: Metadata = {
@@ -15,7 +16,10 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className='bg-'>{children}</body>
+            <body className='bg-#75F6F8'>
+                {children}
+                <Modal/>
+            </body>
         </html>
     )
 }
